@@ -6,6 +6,7 @@
 
 /* Main function */
 int _printf(const char *format, ...);
+int _putchar(char c);
 
 /* Helpers */
 int _putchar(char c);
