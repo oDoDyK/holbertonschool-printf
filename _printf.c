@@ -2,6 +2,42 @@
 #include <stdarg.h>
 
 /**
+ * handle_specifier - handles a conversion specifier
+ * @specifier: the specifier character
+ * @args: list of arguments
+ *
+ * Return: number of characters printed
+ */
+int handle_specifier(char specifier, va_list args)
+{
+	char *str;
+	int count = 0;
+
+	if (specifier == 'c')
+		count += _putchar(va_arg(args, int));
+	else if (specifier == 's')
+	{
+		str = va_arg(args, char *);
+		if (!str)
+			str = "(null)";
+		while (*str)
+		{
+			_putchar(*str++);
+			count++;
+		}
+	}
+	else if (specifier == '%')
+		count += _putchar('%');
+	else
+	{
+		count += _putchar('%');
+		count += _putchar(specifier);
+	}
+
+	return (count);
+}
+
+/**
  * _printf - produces output according to a format
  * @format: format string with conversion specifiers
  *
@@ -11,9 +47,8 @@ int _printf(const char *format, ...)
 {
 	va_list args;
 	int i = 0, count = 0;
-	char *str;
 
-	if (!format) /* null format string */
+	if (!format)
 		return (-1);
 
 	va_start(args, format);
@@ -23,32 +58,12 @@ int _printf(const char *format, ...)
 		if (format[i] == '%')
 		{
 			i++;
-			if (!format[i]) /* lone '%' at end */
+			if (!format[i]) /* lone % at end */
 			{
 				va_end(args);
 				return (-1);
 			}
-
-			if (format[i] == 'c')
-				count += _putchar(va_arg(args, int));
-			else if (format[i] == 's')
-			{
-				str = va_arg(args, char *);
-				if (!str)
-					str = "(null)";
-				while (*str)
-				{
-					_putchar(*str++);
-					count++;
-				}
-			}
-			else if (format[i] == '%')
-				count += _putchar('%');
-			else /* unsupported specifier: print % and char */
-			{
-				count += _putchar('%');
-				count += _putchar(format[i]);
-			}
+			count += handle_specifier(format[i], args);
 		}
 		else
 		{
