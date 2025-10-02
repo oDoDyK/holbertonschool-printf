@@ -1,6 +1,5 @@
 #include "_printf.h"
 #include <unistd.h>
-#include <stdlib.h>
 
 /**
  * print_char - prints a single character
@@ -24,7 +23,7 @@ int print_string(char *s)
     int len = 0;
 
     if (!s)
-        s = "(null)";
+        s = "(null)";  /* safe for %s */
 
     while (*s)
     {
@@ -40,7 +39,7 @@ int print_string(char *s)
  * @format: format string containing characters and specifiers
  *
  * Description: Handles %c, %s, %% and unknown specifiers.
- *              Prints (null) if format is NULL.
+ *              If format is NULL, does nothing and returns 0.
  *
  * Return: number of characters printed
  */
@@ -50,7 +49,7 @@ int _printf(const char *format, ...)
     int i = 0, count = 0;
 
     if (!format)
-        return print_string("(null)");
+        return 0;  /* Fixed: _printf(NULL) prints nothing */
 
     va_start(args, format);
 

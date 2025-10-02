@@ -2,6 +2,7 @@
 #define _PRINTF_H
 
 #include <stdarg.h>
+#include <stddef.h>  /* for NULL */
 
 int _printf(const char *format, ...);
 
