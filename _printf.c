@@ -48,6 +48,12 @@ int _printf(const char *format, ...)
                 write(1, "%", 1);
                 count++;
             }
+            else if (*ptr == '\0')  // Handle single '%' at end
+            {
+                write(1, "%", 1);
+                count++;
+                break;
+            }
             else
             {
                 write(1, "%", 1);
