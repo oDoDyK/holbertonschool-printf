@@ -1,4 +1,4 @@
-#include <stddef.h>  /* NULL */
+#include <stddef.h>   /* for NULL */
 #include "_printf.h"
 
 /**
@@ -10,8 +10,9 @@ int main(void)
 {
     char *str = "This is a long string to test _printf functionality.\n";
 
+    /* Edge case tests */
     _printf(NULL);                  /* Output: (null) */
-    _printf("%c", '\0');            /* Output: invisible */
+    _printf("%c", '\0');            /* Output: invisible character */
     _printf("%");                    /* Output: % */
     _printf("%!\n");                 /* Output: %!\n */
     _printf("%K\n");                 /* Output: %K\n */
