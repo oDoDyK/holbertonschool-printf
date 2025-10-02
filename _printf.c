@@ -1,14 +1,24 @@
-#include <stdarg.h>
+#include "_printf.h"
 #include <unistd.h>
 #include <stdlib.h>
 
-/* Print a single char */
+/**
+ * print_char - prints a single character
+ * @c: the character to print
+ *
+ * Return: number of characters printed (1)
+ */
 int print_char(char c)
 {
     return write(1, &c, 1);
 }
 
-/* Print a string */
+/**
+ * print_string - prints a string
+ * @s: the string to print
+ *
+ * Return: number of characters printed
+ */
 int print_string(char *s)
 {
     int len = 0;
@@ -25,7 +35,15 @@ int print_string(char *s)
     return len;
 }
 
-/* The _printf function */
+/**
+ * _printf - prints formatted output to stdout
+ * @format: format string containing characters and specifiers
+ *
+ * Description: Handles %c, %s, %% and unknown specifiers.
+ *              Prints (null) if format is NULL.
+ *
+ * Return: number of characters printed
+ */
 int _printf(const char *format, ...)
 {
     va_list args;
@@ -63,3 +81,4 @@ int _printf(const char *format, ...)
     va_end(args);
     return count;
 }
+
