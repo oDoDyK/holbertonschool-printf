@@ -1,83 +1,69 @@
-#include "_printf.h"
+#include <stdarg.h>
 #include <unistd.h>
 
 /**
- * print_char - prints a single character
- * @c: the character to print
- *
- * Return: number of characters printed (1)
- */
-int print_char(char c)
-{
-    return write(1, &c, 1);
-}
-
-/**
- * print_string - prints a string
- * @s: the string to print
- *
- * Return: number of characters printed
- */
-int print_string(char *s)
-{
-    int len = 0;
-
-    if (!s)
-        s = "(null)";  /* safe for %s */
-
-    while (*s)
-    {
-        write(1, s, 1);
-        s++;
-        len++;
-    }
-    return len;
-}
-
-/**
- * _printf - prints formatted output to stdout
- * @format: format string containing characters and specifiers
- *
- * Description: Handles %c, %s, %% and unknown specifiers.
- *              If format is NULL, does nothing and returns 0.
- *
+ * _printf - produces output according to a format
+ * @format: the format string
  * Return: number of characters printed
  */
 int _printf(const char *format, ...)
 {
     va_list args;
-    int i = 0, count = 0;
+    int count = 0;
+    const char *ptr;
+    char ch;
+    char *str;
 
     if (!format)
-        return 0;  /* Fixed: _printf(NULL) prints nothing */
+        return (-1);
 
     va_start(args, format);
+    ptr = format;
 
-    while (format[i])
+    while (*ptr)
     {
-        if (format[i] == '%')
+        if (*ptr == '%')
         {
-            i++;
-            if (format[i] == 'c')
-                count += print_char(va_arg(args, int));
-            else if (format[i] == 's')
-                count += print_string(va_arg(args, char *));
-            else if (format[i] == '%')
-                count += print_char('%');
-            else if (format[i] == '\0')
-                break;
+            ptr++;
+            if (*ptr == 'c')
+            {
+                ch = (char)va_arg(args, int);
+                write(1, &ch, 1);
+                count++;
+            }
+            else if (*ptr == 's')
+            {
+                str = va_arg(args, char *);
+                if (!str)
+                    str = "(null)";
+                while (*str)
+                {
+                    write(1, str, 1);
+                    str++;
+                    count++;
+                }
+            }
+            else if (*ptr == '%')
+            {
+                write(1, "%", 1);
+                count++;
+            }
             else
             {
-                count += print_char('%');
-                count += print_char(format[i]);
+                write(1, "%", 1);
+                write(1, ptr, 1);
+                count += 2;
             }
         }
         else
-            count += print_char(format[i]);
-        i++;
+        {
+            write(1, ptr, 1);
+            count++;
+        }
+        ptr++;
     }
 
     va_end(args);
-    return count;
+    return (count);
 }
 

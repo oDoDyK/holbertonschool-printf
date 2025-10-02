@@ -1,15 +1,20 @@
-#include "main.h"
+#include <stdio.h>
 
-/**
- * main - Entry point
- *
- * Return: Always 0
- */
+/* Declare _printf so main knows about it */
+int _printf(const char *format, ...);
+
 int main(void)
 {
-	_printf("Hello %d World!\n", 1234);
-	_printf("Negative number: %i\n", -5678);
-	_printf("Mix: %d and %i\n", 42, -42);
-	return (0);
-}
+    int len;
 
+    len = _printf("Hello %s! This is a test: %c %%\n", "world", 'A');
+    _printf("Number of characters printed: %d\n", len);
+
+    /* Test NULL string */
+    _printf("Testing NULL string: %s\n", NULL);
+
+    /* Test just percent */
+    _printf("Show percent: %%\n");
+
+    return 0;
+}
