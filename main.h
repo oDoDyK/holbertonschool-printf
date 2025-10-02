@@ -7,6 +7,7 @@
 /* Main function */
 int _printf(const char *format, ...);
 int _putchar(char c);
+int print_number(long int n);
 
 /* Helpers */
 int _putchar(char c);

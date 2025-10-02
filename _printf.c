@@ -1,54 +1,40 @@
 #include "main.h"
-#include <stdarg.h>
 
 /**
- * handle_specifier - handles a conversion specifier
- * @specifier: the specifier character
- * @args: list of arguments
- *
- * Return: number of characters printed
+ * handle_format - Handle a format specifier and print accordingly
+ * @format_char: The format specifier character
+ * @args: va_list of arguments
+ * Return: Number of characters printed
  */
-int handle_specifier(char specifier, va_list args)
+int handle_format(char format_char, va_list args)
 {
-	char *str;
-	int count = 0;
+	if (format_char == 'c')
+		return (print_char(args));
+	if (format_char == 's')
+		return (print_string(args));
+	/*--*/
+	if (format_char == 'd' || format_char == 'i')
+        return (print_int(args));
+	
+	if (format_char == '%')
+		return (write(1, "%", 1));
 
-	if (specifier == 'c')
-		count += _putchar(va_arg(args, int));
-	else if (specifier == 's')
-	{
-		str = va_arg(args, char *);
-		if (!str)
-			str = "(null)";
-		while (*str)
-		{
-			_putchar(*str++);
-			count++;
-		}
-	}
-	else if (specifier == '%')
-		count += _putchar('%');
-	else
-	{
-		count += _putchar('%');
-		count += _putchar(specifier);
-	}
-
-	return (count);
+	/* Unknown specifier: print '%' and the character */
+	write(1, "%", 1);
+	return (write(1, &format_char, 1) + 1);
 }
 
 /**
- * _printf - produces output according to a format
- * @format: format string with conversion specifiers
- *
- * Return: number of characters printed, or -1 on error
+ * _printf - Produces output according to a format
+ * @format: Format string
+ * Return: Number of characters printed
  */
 int _printf(const char *format, ...)
 {
 	va_list args;
-	int i = 0, count = 0;
+	int i = 0, printed = 0, res;
 
-	if (!format)
+	if (format == NULL)
 		return (-1);
 
 	va_start(args, format);
@@ -58,21 +44,22 @@ int _printf(const char *format, ...)
 		if (format[i] == '%')
 		{
 			i++;
-			if (!format[i]) /* lone % at end */
+			if (format[i] == '\0')
 			{
 				va_end(args);
 				return (-1);
 			}
-			count += handle_specifier(format[i], args);
+			res = handle_format(format[i], args);
+			printed += res;
 		}
 		else
 		{
-			count += _putchar(format[i]);
+			printed += write(1, &format[i], 1);
 		}
 		i++;
 	}
 
 	va_end(args);
-	return (count);
+	return (printed);
 }
 
