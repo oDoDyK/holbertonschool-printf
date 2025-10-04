@@ -3,27 +3,32 @@
 
 #include <stdarg.h>
 #include <unistd.h>
-#include <stdlib.h>
 
 /**
- * struct specifier - struct for specifiers
- * @c: character representing the specifier
- * @f: pointer to function to handle the specifier
+ * struct print - structure for format specifiers and their functions
+ * @spec: format specifier character (e.g., 'c', 's', 'd')
+ * @f: function pointer to the corresponding print function
  */
-typedef struct specifier
+typedef struct print
 {
-	char c;
-	int (*f)(va_list);
-} specifier_t;
+    char spec;
+    int (*f)(va_list);
+} print_t;
 
+/* Main printf function */
 int _printf(const char *format, ...);
+
+/* Helper print functions */
 int _putchar(char c);
 int print_char(va_list args);
 int print_string(va_list args);
-int print_percent(va_list args);
 int print_int(va_list args);
-int print_binary(va_list args);
-int (*get_func(char s))(va_list);
+int print_unsigned(va_list args);
+int print_octal(va_list args);
+int print_hex(va_list args);
+int print_HEX(va_list args);
 
-#endif
+/* Function selector */
+int (*get_func(char c))(va_list);
 
+#endif /* MAIN_H */
