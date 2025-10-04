@@ -3,8 +3,8 @@
 #include <unistd.h>
 
 /**
- * _putchar - write a character to stdout
- * @c: character
+ * _putchar - writes a character to stdout
+ * @c: character to write
  *
  * Return: 1 on success, -1 on error
  */
@@ -14,14 +14,14 @@ int _putchar(char c)
 }
 
 /**
- * print_text - print a string
- * @s: string
+ * print_string - prints a string
+ * @s: string to print
  *
  * Return: number of characters printed
  */
-static int print_text(const char *s)
+static int print_string(const char *s)
 {
-	int total = 0;
+	int count = 0;
 	int ret;
 
 	if (!s)
@@ -32,87 +32,14 @@ static int print_text(const char *s)
 		ret = _putchar(*s);
 		if (ret == -1)
 			return (-1);
-		total += ret;
+		count += ret;
 		s++;
 	}
-	return (total);
+	return (count);
 }
 
 /**
- * print_int - print an integer
- * @n: integer
- *
- * Return: number of characters printed
- */
-int main(void)
-{
-	_printf("Hello, %s! Number: %d%%\n", "world", 42);
-	return (0);
-}
-static int print_int(int n)
-{
-	unsigned int val;
-	int total = 0;
-	int ret;
-
-	if (n < 0)
-	{
-		ret = _putchar('-');
-		if (ret == -1)
-			return (-1);
-		total += ret;
-		val = (unsigned int)(-n);
-	}
-	else
-		val = (unsigned int)n;
-
-	if (val / 10)
-	{
-		ret = print_int(val / 10);
-		if (ret == -1)
-			return (-1);
-		total += ret;
-	}
-
-	ret = _putchar((val % 10) + '0');
-	if (ret == -1)
-		return (-1);
-	total += ret;
-
-	return (total);
-}
-
-/**
- * handle_format - handle one format specifier
- * @c: format character
- * @ap: argument list
- *
- * Return: number of characters printed
- */
-static int handle_format(char c, va_list ap)
-{
-	int ret;
-
-	if (c == 'c')
-		return (_putchar((char)va_arg(ap, int)));
-	if (c == 's')
-		return (print_text(va_arg(ap, char *)));
-	if (c == '%')
-		return (_putchar('%'));
-	if (c == 'd' || c == 'i')
-		return (print_int(va_arg(ap, int)));
-
-	ret = _putchar('%');
-	if (ret == -1)
-		return (-1);
-	if (_putchar(c) == -1)
-		return (-1);
-
-	return (2);
-}
-
-/**
- * _printf - custom printf function
+ * _printf - prints according to a format
  * @format: format string
  *
  * Return: number of characters printed
@@ -127,6 +54,7 @@ int _printf(const char *format, ...)
 		return (-1);
 
 	va_start(ap, format);
+
 	while (*format)
 	{
 		if (*format != '%')
@@ -147,7 +75,16 @@ int _printf(const char *format, ...)
 				va_end(ap);
 				return (-1);
 			}
-			ret = handle_format(*format, ap);
+
+			if (*format == 'c')
+				ret = _putchar(va_arg(ap, int));
+			else if (*format == 's')
+				ret = print_string(va_arg(ap, const char *));
+			else if (*format == '%')
+				ret = _putchar('%');
+			else
+				ret = _putchar('%'), ret += _putchar(*format);
+
 			if (ret == -1)
 			{
 				va_end(ap);
@@ -157,7 +94,18 @@ int _printf(const char *format, ...)
 		}
 		format++;
 	}
+
 	va_end(ap);
 	return (count);
 }
+
+/* Optional inline main for testing */
+#ifdef TEST_PRINTF
+int main(void)
+{
+	_printf("0. I'm not going anywhere. You can print that wherever you want to. I'm here and I'm a Spur for life\n");
+	_printf("Character: %c, String: %s, Percent: %%\n", 'A', "Hello");
+	return (0);
+}
+#endif
 
