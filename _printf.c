@@ -1,10 +1,8 @@
 #include "main.h"
-#include <stdarg.h>
-#include <unistd.h>
 
 /**
- * _putchar - writes a character to stdout
- * @c: character to write
+ * _putchar - Write one character to stdout
+ * @c: character to print
  *
  * Return: 1 on success, -1 on error
  */
@@ -14,43 +12,88 @@ int _putchar(char c)
 }
 
 /**
- * print_string - prints a string
- * @s: string to print
+ * print_text - Print a string
+ * @s: pointer to string
  *
  * Return: number of characters printed
  */
-static int print_string(const char *s)
+static int print_text(char *s)
 {
-	int count = 0;
-	int ret;
+	int total = 0;
 
-	if (!s)
+	if (s == (char *)0)
 		s = "(null)";
 
 	while (*s)
 	{
-		ret = _putchar(*s);
-		if (ret == -1)
-			return (-1);
-		count += ret;
+		total += _putchar(*s);
 		s++;
 	}
-	return (count);
+	return (total);
 }
 
 /**
- * _printf - prints according to a format
- * @format: format string
+ * print_int - Print integer
+ * @n: number to print
  *
  * Return: number of characters printed
+ */
+static int print_int(int n)
+{
+	unsigned int val;
+	int total = 0;
+
+	if (n < 0)
+	{
+		total += _putchar('-');
+		val = (unsigned int)(-n);
+	}
+	else
+		val = (unsigned int)n;
+
+	if (val / 10)
+		total += print_int((int)(val / 10));
+
+	total += _putchar((val % 10) + '0');
+	return (total);
+}
+
+/**
+ * handle_format - Manage one format specifier
+ * @c: the format character
+ * @ap: list of arguments
+ *
+ * Return: number of characters printed
+ */
+static int handle_format(char c, va_list ap)
+{
+	if (c == 'c')
+		return (_putchar((char)va_arg(ap, int)));
+	if (c == 's')
+		return (print_text(va_arg(ap, char *)));
+	if (c == '%')
+		return (_putchar('%'));
+	if (c == 'd' || c == 'i')
+		return (print_int(va_arg(ap, int)));
+
+	/* Unknown specifier: print it raw */
+	_putchar('%');
+	_putchar(c);
+	return (2);
+}
+
+/**
+ * _printf - Produce output like printf
+ * @format: format string
+ *
+ * Return: number of characters printed, -1 if error
  */
 int _printf(const char *format, ...)
 {
 	va_list ap;
 	int count = 0;
-	int ret;
 
-	if (!format)
+	if (format == (const char *)0)
 		return (-1);
 
 	va_start(ap, format);
@@ -59,53 +102,22 @@ int _printf(const char *format, ...)
 	{
 		if (*format != '%')
 		{
-			ret = _putchar(*format);
-			if (ret == -1)
-			{
-				va_end(ap);
-				return (-1);
-			}
-			count += ret;
+			count += _putchar(*format);
 		}
 		else
 		{
 			format++;
-			if (!*format)
+			if (*format == '\0')
 			{
 				va_end(ap);
 				return (-1);
 			}
-
-			if (*format == 'c')
-				ret = _putchar(va_arg(ap, int));
-			else if (*format == 's')
-				ret = print_string(va_arg(ap, const char *));
-			else if (*format == '%')
-				ret = _putchar('%');
-			else
-				ret = _putchar('%'), ret += _putchar(*format);
-
-			if (ret == -1)
-			{
-				va_end(ap);
-				return (-1);
-			}
-			count += ret;
+			count += handle_format(*format, ap);
 		}
 		format++;
 	}
-
 	va_end(ap);
+
 	return (count);
 }
-
-/* Optional inline main for testing */
-#ifdef TEST_PRINTF
-int main(void)
-{
-	_printf("0. I'm not going anywhere. You can print that wherever you want to. I'm here and I'm a Spur for life\n");
-	_printf("Character: %c, String: %s, Percent: %%\n", 'A', "Hello");
-	return (0);
-}
-#endif
 
